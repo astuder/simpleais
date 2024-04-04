@@ -2122,42 +2122,48 @@
                     "end": 86,
                     "description": "NE Longitude",
                     "member": "ne_lon",
-                    "type": "I1"
+                    "type": "I1",
+                    "subtype": 0
                 },
                 {
                     "start": 87,
                     "end": 103,
                     "description": "NE Latitude",
                     "member": "ne_lat",
-                    "type": "I1"
+                    "type": "I1",
+                    "subtype": 0
                 },
                 {
                     "start": 104,
                     "end": 121,
                     "description": "SW Longitude",
                     "member": "sw_lon",
-                    "type": "I1"
+                    "type": "I1",
+                    "subtype": 0
                 },
                 {
                     "start": 122,
                     "end": 138,
                     "description": "SW Latitude",
                     "member": "sw_lat",
-                    "type": "I1"
+                    "type": "I1",
+                    "subtype": 0
                 },
                 {
                     "start": 69,
                     "end": 98,
                     "description": "MMSI1",
                     "member": "dest1",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 104,
                     "end": 133,
                     "description": "MMSI2",
                     "member": "dest2",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 139,
@@ -2194,7 +2200,8 @@
                     "member": "ignored-145",
                     "type": "x"
                 }
-            ]
+            ],
+            "subtype_field": "addressed"
         },
         "23": {
             "name": "Group Assignment Command",
@@ -2342,93 +2349,107 @@
                     "end": 159,
                     "description": "Vessel Name",
                     "member": "shipname",
-                    "type": "t"
+                    "type": "t",
+                    "subtype": 0
                 },
                 {
                     "start": 160,
                     "end": 167,
                     "description": "Spare",
                     "member": "ignored-160",
-                    "type": "x"
+                    "type": "x",
+                    "subtype": 0
                 },
                 {
                     "start": 40,
                     "end": 47,
                     "description": "Ship Type",
                     "member": "shiptype",
-                    "type": "e"
+                    "type": "e",
+                    "subtype": 1
                 },
                 {
                     "start": 48,
                     "end": 65,
                     "description": "Vendor ID",
                     "member": "vendorid",
-                    "type": "t"
+                    "type": "t",
+                    "subtype": 1
                 },
                 {
                     "start": 66,
                     "end": 69,
                     "description": "Unit Model Code",
                     "member": "model",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 70,
                     "end": 89,
                     "description": "Serial Number",
                     "member": "serial",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 90,
                     "end": 131,
                     "description": "Call Sign",
                     "member": "callsign",
-                    "type": "t"
+                    "type": "t",
+                    "subtype": 1
                 },
                 {
                     "start": 132,
                     "end": 140,
                     "description": "Dimension to Bow",
                     "member": "to_bow",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 141,
                     "end": 149,
                     "description": "Dimension to Stern",
                     "member": "to_stern",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 150,
                     "end": 155,
                     "description": "Dimension to Port",
                     "member": "to_port",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 156,
                     "end": 161,
                     "description": "Dimension to Starboard",
                     "member": "to_starboard",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 132,
                     "end": 161,
                     "description": "Mothership MMSI",
                     "member": "mothership_mmsi",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 },
                 {
                     "start": 162,
                     "end": 167,
                     "description": "Spare",
                     "member": "ignored-162",
-                    "type": "x"
+                    "type": "x",
+                    "subtype": 1
                 }
-            ]
+            ],
+            "subtype_field": "partno"
         },
         "25": {
             "name": "Single Slot Binary Message",
@@ -2470,12 +2491,14 @@
                 },
                 {
                     "start": 40,
-                    "end": 40,
+                    "end": 70,
                     "description": "Destination MMSI",
                     "member": "dest_mmsi",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 }
-            ]
+            ],
+            "subtype_field": "addressed"
         },
         "26": {
             "name": "Multiple Slot Binary Message",
@@ -2517,12 +2540,14 @@
                 },
                 {
                     "start": 40,
-                    "end": 40,
+                    "end": 70,
                     "description": "Destination MMSI",
                     "member": "dest_mmsi",
-                    "type": "u"
+                    "type": "u",
+                    "subtype": 1
                 }
-            ]
+            ],
+            "subtype_field": "addressed"
         },
         "27": {
             "name": "Long Range AIS Broadcast message",

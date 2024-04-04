@@ -563,13 +563,23 @@ class TimeFieldDecoder(FieldDecoder):
 
 
 class MessageDecoder:
-    def __init__(self, message_info):
+    def __init__(self, message_info, subtype=None):
         self.field_decoders = []
         self.field_decoders_by_id = collections.OrderedDict()
+        subtypes = collections.OrderedDict()
         for field in message_info['fields']:
-            decoder = BitFieldDecoder(field['member'], field['start'], field['end'], field['type'],
-                                      field['description'])
-            self.add_field_decoder(field['member'], decoder)
+            if subtype is None or field.get('subtype') is None or field['subtype'] == subtype:
+                decoder = BitFieldDecoder(field['member'], field['start'], field['end'], field['type'],
+                                          field['description'])
+                self.add_field_decoder(field['member'], decoder)
+                if subtype is None and field.get('subtype') is not None:
+                    subtypes[field['subtype']] = True
+
+        self.subtype_decoders = collections.OrderedDict()
+        self.subtype_field = message_info.get('subtype_field')
+        if subtype is None and not self.subtype_field is None:
+            for s in subtypes:
+                self.subtype_decoders[s] = MessageDecoder(message_info, s)
 
     def add_field_decoder(self, name, decoder):
         self.field_decoders.append(decoder)
@@ -594,6 +604,16 @@ class MessageDecoder:
         else:
             return self.field_decoders_by_id[key]
 
+    def has_subtypes(self):
+        return len(self.subtype_decoders) > 0
+
+    def get_subtype_decoder(self, sentence):
+        subtype = self.decode(self.subtype_field, sentence)
+        decoder = self.subtype_decoders.get(subtype)
+        if decoder is None:
+            return self
+        else:
+            return decoder
 
 class AisEnum:
     def __init__(self, key, value):
@@ -755,6 +775,8 @@ class Sentence:
         self.text = text
         self.type_num = _int_lookup[payload.data[0].ascii[0]]
         self._decoder = _decoder_for_type(self.type_num)
+        if self._decoder.has_subtypes():
+            self._decoder = self._decoder.get_subtype_decoder(self)
 
     def type_id(self):
         return self.type_num

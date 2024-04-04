@@ -46,13 +46,13 @@ class Table:
 
 def fields_for_row(row):
     result = OrderedDict()
-    m = re.search("(\d+)-(\d+)", row['Field'])
+    m = re.search("(\\d+)-(\\d+)", row['Field'])
 
     if m:
         result['start'] = int(m.group(1))
         result['end'] = int(m.group(2))
     else:
-        m = re.search("(\d+)", row['Field'])
+        m = re.search("(\\d+)", row['Field'])
         result['start'] = result['end'] = int(m.group(1))
     result['description'] = row['Description']
 
@@ -77,7 +77,7 @@ def fields_for_row(row):
 
 def keyify(string):
     string = string.lower()
-    return re.sub('\s+', '_', string)
+    return re.sub('\\s+', '_', string)
 
 
 def message_info_for_table(table, name):
@@ -90,10 +90,10 @@ def message_info_for_table(table, name):
 def lookup_for_table(table):
     result = {}
     for key, value in table.rows:
-        if re.match('^\d+$', key):
+        if re.match('^\\d+$', key):
             result[key] = value
-        elif re.match('^\d+-\d+$', key):
-            first, last = re.match('(^\d+)-(\d+)$', key).groups()
+        elif re.match('^\\d+-\\d+$', key):
+            first, last = re.match('(^\\d+)-(\\d+)$', key).groups()
             for i in range(int(first), int(last) + 1):
                 result[i] = value
         else:
@@ -109,7 +109,7 @@ def extract_message_types(soup, message_types):
             messages["1"] = message_info_for_table(cnb_table, message_types[0][1])
             messages["2"] = message_info_for_table(cnb_table, message_types[1][1])
             messages["3"] = message_info_for_table(cnb_table, message_types[2][1])
-        match = re.search('Type (\d+):?\s+(.*)', h3.text)
+        match = re.search('Type (\\d+):?\\s+(.*)', h3.text)
         if match:
             messages[match.group(1)] = message_info_for_table(Table(h3.find_next('table')), match.group(2))
     return messages
@@ -120,8 +120,8 @@ def extract_lookups(soup):
     for htmltable in soup.find_all('table'):
         if htmltable.caption:
             caption = htmltable.caption.get_text()
-            caption = re.sub('\s*Table \d+\.\s+', '', caption)
-            caption = re.sub('Codes for\s+', '', caption)
+            caption = re.sub('\\s*Table \\d+\\.\\s+', '', caption)
+            caption = re.sub('Codes for\\s+', '', caption)
             # grab the tables we know we use
             if caption in ('Navigation Status', 'Ship Type'):
                 table = Table(htmltable, headings_override=['key', 'value'], title_override=caption)
@@ -139,6 +139,33 @@ messages = extract_message_types(soup, message_types)
 messages["19"]["fields"][13]["type"] = "e"  # text says (and data confirms) it's an enum
 messages["27"]["fields"][6]["type"] = "I1"
 messages["27"]["fields"][7]["type"] = "I1"
+
+# type 22: fields dependent on addressed/broadcast
+messages["22"]["subtype_field"] = "addressed"
+t22_broadcast = [8,9,10,11]
+t22_addressed = [12,13]
+for x in t22_broadcast:
+    messages["22"]["fields"][x]["subtype"] = 0
+for x in t22_addressed:
+    messages["22"]["fields"][x]["subtype"] = 1
+
+# type 24: fields dependent on partno
+messages["24"]["subtype_field"] = "partno"
+t24_part_a = [4,5]
+t24_part_b = range(6,17)
+for x in t24_part_a:
+    messages["24"]["fields"][x]["subtype"] = 0
+for x in t24_part_b:
+    messages["24"]["fields"][x]["subtype"] = 1
+
+# type 25/26: dest_mmsi dependens on addressed/broadcast
+# TODO: data is of variable length and not supported yet
+messages["25"]["subtype_field"] = "addressed"
+messages["25"]["fields"][5]["end"] = 70
+messages["25"]["fields"][5]["subtype"] = 1
+messages["26"]["subtype_field"] = "addressed"
+messages["26"]["fields"][5]["end"] = 70
+messages["26"]["fields"][5]["subtype"] = 1
 
 lookups = extract_lookups(soup)
 
